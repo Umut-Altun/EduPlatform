@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'content_sharing/css/content_form.css' %}">
+<style>
+    .delete-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 30px;
+    }
+    
+    .delete-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+    }
+    
+    .delete-icon {
+        text-align: center;
+        font-size: 60px;
+        color: #e74c3c;
+        margin-bottom: 20px;
+    }
+    
+    .delete-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .delete-info {
+        margin-bottom: 30px;
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    
+    .delete-info h4 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+    
+    .delete-info p {
+        color: #666;
+        margin-bottom: 0;
+    }
+    
+    .delete-actions {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-navigation">
+    <a href="{% url 'settings:my_content' %}" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Gönderilerime Dön
+    </a>
+</div>
+
+<div class="delete-container">
+    <div class="delete-card">
+        <div class="delete-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        
+        <div class="delete-title">
+            İçeriği Silmek İstediğinize Emin Misiniz?
+        </div>
+        
+        <div class="delete-info">
+            <h4>{{ content.title }}</h4>
+            <p>Bu işlem geri alınamaz. İçerik ve tüm ilişkili veriler (yorumlar, beğeniler) kalıcı olarak silinecektir.</p>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="delete-actions">
+                <a href="{% url 'settings:my_content' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+                
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i> Kalıcı Olarak Sil
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

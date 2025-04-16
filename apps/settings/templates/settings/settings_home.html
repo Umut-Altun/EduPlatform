@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'settings/css/settings.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'settings/js/settings.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <div class="page-header">
+        <h1 class="page-title">Hesap Ayarları</h1>
+        
+        <nav class="settings-nav">
+            <a href="{% url 'settings:profile' %}" class="settings-nav-btn {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                <i class="fas fa-user"></i>
+                Profil Bilgileri
+            </a>
+            <a href="{% url 'settings:password' %}" class="settings-nav-btn {% if request.resolver_match.url_name == 'password' %}active{% endif %}">
+                <i class="fas fa-key"></i>
+                Şifre Değiştir
+            </a>
+            <a href="{% url 'settings:my_content' %}" class="settings-nav-btn {% if request.resolver_match.url_name == 'my_content' %}active{% endif %}">
+                <i class="fas fa-file-alt"></i>
+                Gönderilerim
+            </a>
+        </nav>
+    </div>
+    
+    <div class="settings-section">
+        {% block settings_content %}
+        <div class="settings-section-header">
+            <h3>Hesap Ayarlarına Hoş Geldiniz</h3>
+            <p>Profil bilgilerinizi güncelleyebilir, şifrenizi değiştirebilir ve gönderilerinizi yönetebilirsiniz.</p>
+        </div>
+
+        <div class="user-info-display">
+            <div class="user-avatar-section">
+                <div class="user-avatar">
+                    <img src="{% static 'images/default-avatar.png' %}" alt="Profil Fotoğrafı">
+                </div>
+                <div class="user-details">
+                    <h3>{{ user.get_full_name }}</h3>
+                </div>
+            </div>
+
+            <div class="user-meta">
+                <div class="meta-item">
+                    <span class="meta-label">E-posta</span>
+                    <span class="meta-value">{{ user.email }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Son Giriş</span>
+                    <span class="meta-value">{{ user.last_login|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Üyelik Tarihi</span>
+                    <span class="meta-value">{{ user.date_joined|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+</div>
+{% endblock %} 

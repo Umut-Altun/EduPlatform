@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load content_extras %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'content_sharing/css/content_detail.css' %}">
+<style>
+    /* Override container styles for this page */
+    .main-content {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .main-content .container {
+        max-width: 100%;
+        width: 100%;
+        padding: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-detail-container">
+    <div class="content-navigation">
+        <a href="{% url 'content_sharing:list' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            İçerik Listesine Dön
+        </a>
+    </div>
+    
+    <div class="content-detail-card">
+        <div class="content-detail-header">
+            <div class="author-info">
+                <div class="author-avatar">
+                    {% if content.author.profile.avatar %}
+                    <img src="{{ content.author.profile.avatar.url }}" alt="{{ content.author.username }}">
+                    {% else %}
+                    <div class="default-avatar">{{ content.author.username|first }}</div>
+                    {% endif %}
+                </div>
+                <div class="author-details">
+                    <h4>{{ content.author.get_full_name|default:content.author.username }}</h4>
+                    <span>{{ content.created_at|timesince }} önce</span>
+                </div>
+            </div>
+            <div class="content-badge">
+                {% if content.content_type == 'note' %}
+                <span class="badge bg-info"><i class="fas fa-file-alt"></i> Notlar</span>
+                {% elif content.content_type == 'project' %}
+                <span class="badge bg-success"><i class="fas fa-project-diagram"></i> Projeler</span>
+                {% elif content.content_type == 'assignment' %}
+                <span class="badge bg-warning"><i class="fas fa-tasks"></i> Ödevler</span>
+                {% endif %}
+                
+                {% if content.category %}
+                <span class="badge bg-secondary"><i class="fas fa-folder"></i> {{ content.category.name }}</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="content-detail-body">
+            <h1>{{ content.title }}</h1>
+            <div class="content-description">
+                {{ content.description|linebreaks }}
+            </div>
+            
+            {% if content.file %}
+            <div class="content-attachments">
+                <h3>Dosya Ekler</h3>
+                <div class="attachment-card">
+                    <div class="attachment-icon">
+                        {% with filename=content.file.name|lower %}
+                            {% if ".pdf" in filename %}
+                            <i class="fas fa-file-pdf"></i>
+                            {% elif ".doc" in filename or ".docx" in filename %}
+                            <i class="fas fa-file-word"></i>
+                            {% elif ".xls" in filename or ".xlsx" in filename %}
+                            <i class="fas fa-file-excel"></i>
+                            {% elif ".ppt" in filename or ".pptx" in filename %}
+                            <i class="fas fa-file-powerpoint"></i>
+                            {% elif ".jpg" in filename or ".jpeg" in filename or ".png" in filename %}
+                            <i class="fas fa-file-image"></i>
+                            {% elif ".zip" in filename or ".rar" in filename %}
+                            <i class="fas fa-file-archive"></i>
+                            {% else %}
+                            <i class="fas fa-file-alt"></i>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="attachment-info">
+                        <h4>{{ content.file.name|default:'dosya.txt'|cut:'content/' }}</h4>
+                        <a href="{{ content.file.url }}" class="download-link" target="_blank">
+                            <i class="fas fa-download"></i>
+                            İndir
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="content-detail-footer">
+            <div class="content-stats">
+                <button class="like-btn" data-id="{{ content.id }}" {% if request.user in content.likes.all %}data-liked="true"{% endif %}>
+                    <i class="{% if request.user in content.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                    <span class="like-count">{{ content.likes.count }}</span> Beğeni
+                </button>
+                <div class="comment-count">
+                    <i class="far fa-comment"></i>
+                    <span>{{ content.comments_count }}</span> Yorum
+                </div>
+            </div>
+            <div class="content-meta">
+                <i class="far fa-clock"></i> Son güncelleme: {{ content.updated_at|date:"d.m.Y H:i" }}
+            </div>
+        </div>
+    </div>
+    
+    <div class="comments-section">
+        <h2>Yorumlar ({{ content.comments_count }})</h2>
+        
+        {% if user.is_authenticated %}
+        <div class="comment-form-container">
+            <form method="post">
+                {% csrf_token %}
+                <div class="comment-form-header">
+                    <div class="user-avatar">
+                        {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
+                        {% else %}
+                        <div class="default-avatar">{{ user.username|first }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group flex-grow-1">
+                        {{ comment_form.text }}
+                    </div>
+                </div>
+                <div class="comment-form-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="far fa-paper-plane"></i>
+                        Yorum Gönder
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% else %}
+        <div class="login-prompt">
+            <p><i class="fas fa-lock"></i> Yorum yapabilmek için <a href="{% url 'account_login' %}">giriş</a> yapmalısınız.</p>
+        </div>
+        {% endif %}
+        
+        <div class="comments-list">
+            {% if comments %}
+                {% for comment in comments %}
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div class="commenter-info">
+                            <div class="commenter-avatar">
+                                {% if comment.author.profile.avatar %}
+                                <img src="{{ comment.author.profile.avatar.url }}" alt="{{ comment.author.username }}">
+                                {% else %}
+                                <div class="default-avatar">{{ comment.author.username|first }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="commenter-details">
+                                <h4>{{ comment.author.get_full_name|default:comment.author.username }}</h4>
+                                <span>{{ comment.created_at|timesince }} önce</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="comment-body">
+                        {{ comment.text|linebreaks }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-comments">
+                    <p><i class="far fa-comment-dots"></i> Henüz yorum bulunmuyor. İlk yorumu siz yapın!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'content_sharing/js/content_detail.js' %}"></script>
+{% endblock %} 

@@ -1,0 +1,140 @@
+{% extends 'settings/settings_home.html' %}
+{% load static %}
+{% load content_extras %}
+
+{% block settings_content %}
+<div class="settings-section-header">
+    <h3>Gönderilerim</h3>
+    <p>Paylaştığınız içerikleri buradan yönetebilirsiniz.</p>
+</div>
+
+<div class="content-filters">
+    <button class="filter-btn {% if not active_type %}active{% endif %}" data-type="">
+        <i class="fas fa-th-large"></i> Tüm İçerikler
+    </button>
+    <button class="filter-btn {% if active_type == 'note' %}active{% endif %}" data-type="note">
+        <i class="fas fa-file-alt"></i> Notlar
+    </button>
+    <button class="filter-btn {% if active_type == 'project' %}active{% endif %}" data-type="project">
+        <i class="fas fa-project-diagram"></i> Projeler
+    </button>
+    <button class="filter-btn {% if active_type == 'assignment' %}active{% endif %}" data-type="assignment">
+        <i class="fas fa-tasks"></i> Ödevler
+    </button>
+    
+    <div class="ms-auto">
+        <a href="{% url 'content_sharing:create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Yeni İçerik Ekle
+        </a>
+    </div>
+</div>
+
+<div class="content-cards">
+    {% if contents %}
+        {% for content in contents %}
+        <div class="content-card">
+            <div class="content-card-header">
+                <div class="content-date">
+                    <small>{{ content.created_at|date:"d M Y, H:i" }}</small>
+                </div>
+                <div class="content-badge">
+                    {% if content.content_type == 'note' %}
+                    <span class="badge bg-info"><i class="fas fa-file-alt"></i> Not</span>
+                    {% elif content.content_type == 'project' %}
+                    <span class="badge bg-success"><i class="fas fa-project-diagram"></i> Proje</span>
+                    {% elif content.content_type == 'assignment' %}
+                    <span class="badge bg-warning"><i class="fas fa-tasks"></i> Ödev</span>
+                    {% endif %}
+                    
+                    {% if content.category %}
+                    <span class="badge bg-secondary"><i class="fas fa-folder"></i> {{ content.category.name }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="content-card-body">
+                <h3><a href="{% url 'content_sharing:detail' content.id %}">{{ content.title }}</a></h3>
+                <p>{{ content.description|truncatewords:15 }}</p>
+            </div>
+            
+            {% if content.file %}
+            <div class="content-attachments">
+                <a href="{{ content.file.url }}" class="attachment-link" target="_blank">
+                    {% with filename=content.file.name|lower %}
+                        {% if ".pdf" in filename %}
+                        <i class="fas fa-file-pdf"></i>
+                        {% elif ".doc" in filename or ".docx" in filename %}
+                        <i class="fas fa-file-word"></i>
+                        {% elif ".xls" in filename or ".xlsx" in filename %}
+                        <i class="fas fa-file-excel"></i>
+                        {% elif ".ppt" in filename or ".pptx" in filename %}
+                        <i class="fas fa-file-powerpoint"></i>
+                        {% elif ".jpg" in filename or ".jpeg" in filename or ".png" in filename %}
+                        <i class="fas fa-file-image"></i>
+                        {% elif ".zip" in filename or ".rar" in filename %}
+                        <i class="fas fa-file-archive"></i>
+                        {% else %}
+                        <i class="fas fa-file-alt"></i>
+                        {% endif %}
+                    {% endwith %}
+                    <span>{{ content.file.name|default:'dosya.txt'|cut:'content/' }}</span>
+                </a>
+            </div>
+            {% endif %}
+            
+            <div class="content-card-footer">
+                <div class="content-stats">
+                    <div class="likes">
+                        <i class="fas fa-heart"></i> {{ content.likes.count }}
+                    </div>
+                    <div class="comments">
+                        <i class="far fa-comment"></i> {{ content.comments_count }}
+                    </div>
+                </div>
+                <div class="content-actions">
+                    <a href="{% url 'content_sharing:edit' content.id %}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'content_sharing:delete' content.id %}" class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="no-content col-12">
+        <div class="no-content-icon">
+            <i class="far fa-file-alt"></i>
+        </div>
+        <h3>Henüz içerik paylaşmadınız</h3>
+        <p>Yeni bir içerik ekleyerek başlayabilirsiniz</p>
+        <a href="{% url 'content_sharing:create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Yeni İçerik Ekle
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const type = this.getAttribute('data-type');
+                
+                // Create URL with filter if needed
+                let url = "{% url 'settings:my_content' %}";
+                if (type) {
+                    url += `?type=${type}`;
+                }
+                
+                window.location.href = url;
+            });
+        });
+    });
+</script>
+{% endblock %} 

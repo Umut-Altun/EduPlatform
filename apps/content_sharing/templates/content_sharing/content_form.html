@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'content_sharing/css/content_form.css' %}">
+<style>
+    /* Override container styles for this page */
+    .main-content {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .main-content .container {
+        max-width: 100%;
+        width: 100%;
+        padding: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-form-container">
+    <div class="content-navigation">
+        {% if edit_mode %}
+        <a href="{% url 'settings:my_content' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Gönderilerime Dön
+        </a>
+        {% else %}
+        <a href="{% url 'content_sharing:list' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            İçerik Listesine Dön
+        </a>
+        {% endif %}
+    </div>
+    
+    <div class="form-header">
+        {% if edit_mode %}
+        <h1>İçeriği Düzenle</h1>
+        <p>İçerik bilgilerinizi güncelleyin</p>
+        {% else %}
+        <h1>Yeni İçerik Oluştur</h1>
+        <p>Notlarınızı, projelerinizi ve ödevlerinizi paylaşın</p>
+        {% endif %}
+    </div>
+    
+    <div class="form-content">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-layout">
+                <div class="form-left-column">
+                    <div class="form-section">
+                        <h2>İçerik Bilgileri</h2>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.title.id_for_label }}">
+                                <i class="fas fa-heading"></i> Başlık
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.title.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.category.id_for_label }}">
+                                    <i class="fas fa-folder"></i> Kategori
+                                </label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.category.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.content_type.id_for_label }}">
+                                    <i class="fas fa-file-alt"></i> İçerik Türü
+                                </label>
+                                {{ form.content_type }}
+                                {% if form.content_type.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.content_type.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.description.id_for_label }}">
+                                <i class="fas fa-align-left"></i> Açıklama
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.description.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.file.id_for_label }}">
+                                <i class="fas fa-file-upload"></i> Dosya Ekle
+                            </label>
+                            <div class="file-upload-container" id="fileUploadContainer" {% if content.file %}class="has-file"{% endif %}>
+                                {{ form.file }}
+                                <div class="file-upload-info">
+                                    {% if content.file %}
+                                    <div class="file-info-left">
+                                        {% with filename=content.file.name|lower %}
+                                            {% if ".pdf" in filename %}
+                                            <i class="fas fa-file-pdf"></i>
+                                            {% elif ".doc" in filename or ".docx" in filename %}
+                                            <i class="fas fa-file-word"></i>
+                                            {% elif ".xls" in filename or ".xlsx" in filename %}
+                                            <i class="fas fa-file-excel"></i>
+                                            {% elif ".ppt" in filename or ".pptx" in filename %}
+                                            <i class="fas fa-file-powerpoint"></i>
+                                            {% elif ".jpg" in filename or ".jpeg" in filename or ".png" in filename %}
+                                            <i class="fas fa-file-image"></i>
+                                            {% elif ".zip" in filename or ".rar" in filename %}
+                                            <i class="fas fa-file-archive"></i>
+                                            {% else %}
+                                            <i class="fas fa-file"></i>
+                                            {% endif %}
+                                        {% endwith %}
+                                        <div class="file-name">
+                                            {{ content.file.name|default:'dosya.txt'|cut:'content/' }}
+                                        </div>
+                                    </div>
+                                    <button type="button" class="file-remove-btn" onclick="removeFile()">
+                                        <i class="fas fa-trash-alt"></i>
+                                        Dosyayı Kaldır
+                                    </button>
+                                    {% else %}
+                                    <div class="file-info-left">
+                                        <div>
+                                            <div class="upload-text">Dosyanızı buraya sürükleyin veya seçin</div>
+                                            <small>PDF, Word, Excel, PowerPoint ve resim dosyaları (max. 10MB)</small>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if form.file.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.file.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="form-right-column">
+                    <div class="form-section">
+                        <h2>Yayınlama Seçenekleri</h2>
+                        
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-eye"></i> Görünürlük
+                            </label>
+                            <select class="form-select">
+                                <option selected>Herkese Açık</option>
+                                <option>Sadece Takipçiler</option>
+                                <option>Özel</option>
+                            </select>
+                            <small class="form-text text-muted">İçeriğinizin kimler tarafından görüntülenebileceğini seçin.</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-tags"></i> Etiketler
+                            </label>
+                            <input type="text" class="form-control" placeholder="Virgülle ayırarak etiketler ekleyin">
+                            <small class="form-text text-muted">Örn: matematik, türev, integral</small>
+                        </div>
+                        
+                        <div class="permissions-section">
+                            <h3>
+                                <i class="fas fa-shield-alt"></i>
+                                İçerik İzinleri
+                            </h3>
+                            
+                            <div class="form-group checkbox-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allowComments" checked>
+                                    <label class="form-check-label" for="allowComments">
+                                        <div class="form-check-title">
+                                            <i class="fas fa-comments"></i>
+                                            Yorumlara İzin Ver
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allowDownload" checked>
+                                    <label class="form-check-label" for="allowDownload">
+                                        <div class="form-check-title">
+                                            <i class="fas fa-download"></i>
+                                            İndirmeye İzin Ver
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="allowShare">
+                                    <label class="form-check-label" for="allowShare">
+                                        <div class="form-check-title">
+                                            <i class="fas fa-share-alt"></i>
+                                            Paylaşıma İzin Ver
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-submit">
+                            <button type="submit" class="btn btn-primary">
+                                {% if edit_mode %}
+                                <i class="fas fa-save"></i> Değişiklikleri Kaydet
+                                {% else %}
+                                <i class="fas fa-paper-plane"></i> İçeriği Yayınla
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.querySelector('input[type="file"]');
+        const fileContainer = document.getElementById('fileUploadContainer');
+        const fileInfo = document.querySelector('.file-upload-info');
+        
+        function updateFileInfo(file) {
+            if (file) {
+                const icon = getFileIcon(file.name);
+                fileContainer.classList.add('has-file');
+                fileInfo.innerHTML = `
+                    <div class="file-info-left">
+                        <i class="${icon}"></i>
+                        <div class="file-name">
+                            ${file.name}
+                            <small>(${formatFileSize(file.size)})</small>
+                        </div>
+                    </div>
+                    <button type="button" class="file-remove-btn" onclick="removeFile()">
+                        <i class="fas fa-trash-alt"></i>
+                        Dosyayı Kaldır
+                    </button>
+                `;
+            } else {
+                fileContainer.classList.remove('has-file');
+                fileInfo.innerHTML = `
+                    <div class="file-info-left">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div>
+                            <div class="upload-text">Dosyanızı buraya sürükleyin veya seçin</div>
+                            <small>PDF, Word, Excel, PowerPoint, resim ve arşiv dosyaları (max. 10MB)</small>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        function removeFile() {
+            fileInput.value = '';
+            updateFileInfo(null);
+        }
+        
+        window.removeFile = removeFile; // Global scope'a ekle
+        
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = {
+                'pdf': 'fas fa-file-pdf',
+                'doc': 'fas fa-file-word',
+                'docx': 'fas fa-file-word',
+                'xls': 'fas fa-file-excel',
+                'xlsx': 'fas fa-file-excel',
+                'ppt': 'fas fa-file-powerpoint',
+                'pptx': 'fas fa-file-powerpoint',
+                'jpg': 'fas fa-file-image',
+                'jpeg': 'fas fa-file-image',
+                'png': 'fas fa-file-image',
+                'gif': 'fas fa-file-image',
+                'zip': 'fas fa-file-archive',
+                'rar': 'fas fa-file-archive'
+            };
+            return icons[ext] || 'fas fa-file';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+        
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            updateFileInfo(file);
+        });
+        
+        // Drag & Drop desteği
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileContainer.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileContainer.addEventListener(eventName, () => {
+                fileContainer.classList.add('highlight');
+            });
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileContainer.addEventListener(eventName, () => {
+                fileContainer.classList.remove('highlight');
+            });
+        });
+        
+        fileContainer.addEventListener('drop', (e) => {
+            const file = e.dataTransfer.files[0];
+            fileInput.files = e.dataTransfer.files;
+            updateFileInfo(file);
+        });
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,29 @@
+<nav class="navbar">
+    <div class="navbar-left">
+        <div class="toggle-sidebar">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
+
+    <div class="navbar-right">
+        <a href="/" class="nav-icon">
+            <i class="fas fa-home"></i>
+        </a>
+        <div class="nav-icon notifications">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">2</span>
+        </div>
+        <a href="/mesajlar" class="nav-icon">
+            <i class="fas fa-envelope"></i>
+        </a>
+        <div class="user-profile">
+            <div class="avatar">
+                <img src="/static/images/default-avatar.png" alt="Kullanıcı">
+            </div>
+            <div class="user-info">
+                <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                <span class="user-role">Geliştirici</span>
+            </div>
+        </div>
+    </div>
+</nav>

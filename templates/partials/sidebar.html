@@ -1,0 +1,80 @@
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">
+            <span>E</span>
+        </div>
+        <div class="logo-text">
+            <span>EduPlatform</span>
+        </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="/" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Ana Sayfa</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/icerik-paylasimi" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>İçerik Paylaşımı</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Sohbet Odaları</span>
+                    <!-- <span class="badge">3</span> -->
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-tasks"></i>
+                    <span>Sınav Hazırlık</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Çalışma Grupları</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Akademik İşbirliği</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Kariyer Merkezi</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-heading">ARAÇLAR</div>
+
+    <nav class="sidebar-nav tools-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="/ayarlar" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Ayarlar</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <form action="/logout/" method="POST" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Çıkış Yap</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+</aside>

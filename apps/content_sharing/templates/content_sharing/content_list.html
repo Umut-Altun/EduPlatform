@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load content_extras %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'content_sharing/css/content_list.css' %}">
+<style>
+    /* Override container styles for this page */
+    .main-content {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .main-content .container {
+        max-width: 100%;
+        width: 100%;
+        padding: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-sharing-container">
+    <div class="content-header">
+        <h1>İçerik Paylaşımı</h1>
+        <p>Notlarınızı, projelerinizi ve ödevlerinizi paylaşın ve keşfedin</p>
+        
+        <div class="content-actions">
+            <div class="search-container">
+                <input type="text" placeholder="İçeriklerde ara..." id="content-search" value="{{ request.GET.search|default:'' }}">
+                <i class="fas fa-search"></i>
+            </div>
+            <a href="{% url 'content_sharing:create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Yeni İçerik Ekle
+            </a>
+        </div>
+    </div>
+    
+    <div class="content-body">
+        <div class="sidebar">
+            <div class="filter-section">
+                <h3>Filtreler</h3>
+                
+                <div class="filter-group">
+                    <h4><i class="fas fa-folder"></i> Kategoriler</h4>
+                    <div class="filter-select">
+                        <select id="category-filter" class="form-select">
+                            <option value="">Tüm Kategoriler</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if active_category == category.id|stringformat:"i" %}selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h4><i class="fas fa-file-alt"></i> İçerik Türü</h4>
+                    <div class="filter-select">
+                        <select id="type-filter" class="form-select">
+                            <option value="">Tüm İçerikler</option>
+                            <option value="note" {% if active_type == 'note' %}selected{% endif %}>Notlar</option>
+                            <option value="project" {% if active_type == 'project' %}selected{% endif %}>Projeler</option>
+                            <option value="assignment" {% if active_type == 'assignment' %}selected{% endif %}>Ödevler</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h4><i class="fas fa-sort"></i> Sıralama</h4>
+                    <div class="filter-select">
+                        <select id="sort-filter" class="form-select">
+                            <option value="newest" {% if active_sort == 'newest' %}selected{% endif %}>En Yeni</option>
+                            <option value="oldest" {% if active_sort == 'oldest' %}selected{% endif %}>En Eski</option>
+                            <option value="popular" {% if active_sort == 'popular' %}selected{% endif %}>En Popüler</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button id="apply-filters" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-filter"></i>
+                    Filtreleri Uygula
+                </button>
+            </div>
+        </div>
+        
+        <div class="content-main">
+            <div class="content-tabs">
+                <button class="tab-btn" data-type="">
+                    <i class="fas fa-th-large"></i> Tüm İçerikler
+                </button>
+                <button class="tab-btn" data-type="note">
+                    <i class="fas fa-file-alt"></i> Notlar
+                </button>
+                <button class="tab-btn" data-type="project">
+                    <i class="fas fa-project-diagram"></i> Projeler
+                </button>
+                <button class="tab-btn" data-type="assignment">
+                    <i class="fas fa-tasks"></i> Ödevler
+                </button>
+            </div>
+            
+            <div class="content-list">
+                {% if contents %}
+                    {% for content in contents %}
+                    <div class="content-card">
+                        <div class="content-card-header">
+                            <div class="author-info">
+                                <div class="author-avatar">
+                                    {% if content.author.profile.avatar %}
+                                    <img src="{{ content.author.profile.avatar.url }}" alt="{{ content.author.username }}">
+                                    {% else %}
+                                    <div class="default-avatar">{{ content.author.username|first }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="author-details">
+                                    <h4>{{ content.author.get_full_name|default:content.author.username }}</h4>
+                                    <span>{{ content.created_at|time_since }}</span>
+                                </div>
+                            </div>
+                            <div class="content-badge">
+                                {% if content.content_type == 'note' %}
+                                <span class="badge bg-info"><i class="fas fa-file-alt"></i> Notlar</span>
+                                {% elif content.content_type == 'project' %}
+                                <span class="badge bg-success"><i class="fas fa-project-diagram"></i> Projeler</span>
+                                {% elif content.content_type == 'assignment' %}
+                                <span class="badge bg-warning"><i class="fas fa-tasks"></i> Ödevler</span>
+                                {% endif %}
+                                
+                                {% if content.category %}
+                                <span class="badge bg-secondary"><i class="fas fa-folder"></i> {{ content.category.name }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="content-card-body">
+                            <h3><a href="{% url 'content_sharing:detail' content.id %}">{{ content.title }}</a></h3>
+                            <p>{{ content.description|truncatewords:30 }}</p>
+                        </div>
+                        
+                        {% if content.file %}
+                        <div class="content-attachments">
+                            <a href="{{ content.file.url }}" class="attachment-link" target="_blank">
+                                {% with filename=content.file.name|lower %}
+                                    {% if ".pdf" in filename %}
+                                    <i class="fas fa-file-pdf"></i>
+                                    {% elif ".doc" in filename or ".docx" in filename %}
+                                    <i class="fas fa-file-word"></i>
+                                    {% elif ".xls" in filename or ".xlsx" in filename %}
+                                    <i class="fas fa-file-excel"></i>
+                                    {% elif ".ppt" in filename or ".pptx" in filename %}
+                                    <i class="fas fa-file-powerpoint"></i>
+                                    {% elif ".jpg" in filename or ".jpeg" in filename or ".png" in filename %}
+                                    <i class="fas fa-file-image"></i>
+                                    {% elif ".zip" in filename or ".rar" in filename %}
+                                    <i class="fas fa-file-archive"></i>
+                                    {% else %}
+                                    <i class="fas fa-file-alt"></i>
+                                    {% endif %}
+                                {% endwith %}
+                                <span>{{ content.file.name|default:'dosya.txt'|cut:'content/' }}</span>
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="content-card-footer">
+                            <div class="content-stats">
+                                <button class="like-btn" data-id="{{ content.id }}" {% if request.user in content.likes.all %}data-liked="true"{% endif %}>
+                                    <i class="{% if request.user in content.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                                    <span class="like-count">{{ content.likes.count }}</span>
+                                </button>
+                                <div class="comment-count">
+                                    <i class="far fa-comment"></i>
+                                    <span>{{ content.comments_count }}</span>
+                                </div>
+                            </div>
+                            <a href="{% url 'content_sharing:detail' content.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-external-link-alt"></i> Detaylar
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="no-content">
+                    <div class="no-content-icon">
+                        <i class="far fa-file-alt"></i>
+                    </div>
+                    <h3>Henüz içerik bulunmuyor</h3>
+                    <p>Filtrelerinizi değiştirmeyi deneyin veya yeni bir içerik ekleyin</p>
+                    <a href="{% url 'content_sharing:create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Yeni İçerik Ekle
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'content_sharing/js/content_list.js' %}"></script>
+{% endblock %}
