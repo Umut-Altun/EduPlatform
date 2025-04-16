@@ -177,7 +177,8 @@
                             <label>
                                 <i class="fas fa-tags"></i> Etiketler
                             </label>
-                            <input type="text" class="form-control" placeholder="Virgülle ayırarak etiketler ekleyin">
+                            <input type="text" name="tags" class="form-control" placeholder="Virgülle ayırarak etiketler ekleyin" 
+                                   value="{{ content.tags|default:'' }}">
                             <small class="form-text text-muted">Örn: matematik, türev, integral</small>
                         </div>
                         
@@ -342,4 +343,4 @@
         });
     });
 </script>
-{% endblock %} 
+{% endblock %}

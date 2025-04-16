@@ -52,8 +52,16 @@ def content_create(request):
         if form.is_valid():
             content = form.save(commit=False)
             content.author = request.user
+            
+            # Etiketleri al ve temizle
+            tags = request.POST.get('tags', '').strip()
+            if tags:
+                # Virgülle ayrılmış etiketleri temizle ve kaydet
+                tags = ','.join(tag.strip() for tag in tags.split(',') if tag.strip())
+                content.tags = tags
+                
             content.save()
-            return redirect('content_sharing:list')
+            return redirect('content_sharing:detail', content.id)
     else:
         form = ContentForm()
     
@@ -104,14 +112,23 @@ def like_content(request, pk):
 def content_edit(request, pk):
     content = get_object_or_404(Content, pk=pk)
     
-    # Check if the user is the author of the content
     if content.author != request.user:
         raise PermissionDenied("Bu içeriği düzenleme yetkiniz yok.")
     
     if request.method == 'POST':
         form = ContentForm(request.POST, request.FILES, instance=content)
         if form.is_valid():
-            form.save()
+            content = form.save(commit=False)
+            
+            # Etiketleri güncelle
+            tags = request.POST.get('tags', '').strip()
+            if tags:
+                tags = ','.join(tag.strip() for tag in tags.split(',') if tag.strip())
+                content.tags = tags
+            else:
+                content.tags = ''
+            
+            content.save()
             messages.success(request, "İçerik başarıyla güncellendi.")
             return redirect('settings:my_content')
     else:

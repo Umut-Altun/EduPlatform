@@ -60,6 +60,15 @@
         
         <div class="content-detail-body">
             <h1>{{ content.title }}</h1>
+            {% if content.tags %}
+            <div class="content-tags">
+                {% for tag in content.tags.split|slice:":-1" %}
+                    <span class="badge bg-light text-dark">
+                        <i class="fas fa-tag"></i> {{ tag }}
+                    </span>
+                {% endfor %}
+            </div>
+            {% endif %}
             <div class="content-description">
                 {{ content.description|linebreaks }}
             </div>
@@ -185,4 +194,4 @@
 
 {% block extra_js %}
 <script src="{% static 'content_sharing/js/content_detail.js' %}"></script>
-{% endblock %} 
+{% endblock %}

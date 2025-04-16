@@ -2,9 +2,13 @@ from django import forms
 from .models import Content, Comment, Category
 
 class ContentForm(forms.ModelForm):
+    tags = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Virgülle ayırarak etiketler ekleyin'}
+    ))
+    
     class Meta:
         model = Content
-        fields = ['title', 'description', 'file', 'category', 'content_type']
+        fields = ['title', 'description', 'file', 'category', 'content_type', 'tags']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Başlık'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Açıklama', 'rows': 4}),
