@@ -19,7 +19,7 @@
                         <p>Hesabınızda oturum açın</p>
                     </div>
                     
-                    <form method="POST" class="auth-form">
+                    <form method="POST" class="auth-form" onsubmit="return handleSubmit(this)">
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="input-group">
@@ -41,10 +41,13 @@
                                 <input type="checkbox" name="remember">
                                 <span>Beni hatırla</span>
                             </label>
-                            <a href="#" class="forgot-password">Şifrenizi mi unuttunuz?</a>
+                            <a href="{% url 'forgot_password' %}" class="forgot-password">Şifrenizi mi unuttunuz?</a>
                         </div>
 
-                        <button type="submit" class="auth-button">GİRİŞ YAPIN</button>
+                        <button type="submit" class="auth-button">
+                            <span>GİRİŞ YAPIN</span>
+                        </button>
+                        <div class="loading-text">Giriş yapılıyor...</div>
                     </form>
 
                     <div class="auth-footer">
@@ -72,6 +75,13 @@
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
         });
+
+        function handleSubmit(form) {
+            const button = form.querySelector('.auth-button');
+            button.classList.add('loading');
+            form.classList.add('loading');
+            return true;
+        }
     </script>
 </body>
 </html>

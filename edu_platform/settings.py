@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.content_sharing',
     'apps.settings',
+    'apps.authentication.apps.AuthenticationConfig',
 ]
 
 MIDDLEWARE = [
@@ -108,3 +109,12 @@ LOGOUT_REDIRECT_URL = '/login/'
 # Oturum Ayarları
 SESSION_COOKIE_AGE = 3600  # 60 minutes
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'altunumut0652@gmail.com'
+EMAIL_HOST_PASSWORD = 'yzuq qteu dfcw hjdq'
+DEFAULT_FROM_EMAIL = 'EduPlatform <altunumut0652@gmail.com>'

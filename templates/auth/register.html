@@ -19,7 +19,7 @@
                         <p>Topluluğumuza bugün katılın</p>
                     </div>
                     
-                    <form method="POST" class="auth-form">
+                    <form method="POST" class="auth-form" onsubmit="return handleSubmit(this) && validateForm()">
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="input-group">
@@ -72,7 +72,10 @@
                             </label>
                         </div>
 
-                        <button type="submit" class="auth-button">HESAP OLUŞTUR</button>
+                        <button type="submit" class="auth-button">
+                            <span>HESAP OLUŞTUR</span>
+                        </button>
+                        <div class="loading-text">Hesap oluşturuluyor...</div>
                     </form>
 
                     <div class="auth-footer">
@@ -102,6 +105,39 @@
                 this.classList.toggle('fa-eye-slash');
             });
         });
+
+        function validateForm() {
+            const password1 = document.querySelector('input[name="password1"]').value;
+            const password2 = document.querySelector('input[name="password2"]').value;
+            const terms = document.querySelector('input[name="terms"]').checked;
+            
+            if (!terms) {
+                alert('Lütfen hesap oluşturma sözleşmesini kabul edin!');
+                return false;
+            }
+            
+            if (password1.length < 8) {
+                alert('Şifre en az 8 karakter olmalıdır!');
+                return false;
+            }
+            
+            if (password1 !== password2) {
+                alert('Şifreler eşleşmiyor!');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function handleSubmit(form) {
+            if (validateForm()) {
+                const button = form.querySelector('.auth-button');
+                button.classList.add('loading');
+                form.classList.add('loading');
+                return true;
+            }
+            return false;
+        }
     </script>
 </body>
 </html>

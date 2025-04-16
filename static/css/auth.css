@@ -273,6 +273,49 @@ body {
     box-shadow: 0 4px 12px rgba(109, 40, 217, 0.2);
 }
 
+/* Loading button styles */
+.auth-button.loading {
+    position: relative;
+    color: transparent;
+    pointer-events: none;
+}
+
+.auth-button.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 0.8s linear infinite;
+    box-sizing: border-box;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.auth-button.loading span {
+    visibility: hidden;
+}
+
+/* Loading text states */
+.loading-text {
+    display: none;
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.loading .loading-text {
+    display: block;
+}
+
 /* Footer stiller */
 .auth-footer {
     margin-top: 32px;
@@ -331,4 +374,4 @@ body {
     .welcome-content h2 {
         font-size: 2rem;
     }
-} 
+}
