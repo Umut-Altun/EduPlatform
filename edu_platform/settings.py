@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'apps.content_sharing',
     'apps.settings',
     'apps.authentication.apps.AuthenticationConfig',
+    'apps.chat_rooms',
 ]
 
 MIDDLEWARE = [

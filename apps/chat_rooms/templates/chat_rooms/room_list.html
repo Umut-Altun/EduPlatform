@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sohbet Odaları - EduPlatform{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'chat_rooms/css/rooms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="home-page" class="page active">
+    <div class="content-header">
+        <h1>Sohbet Odaları</h1>
+        <p>Sorularınızı sorun, tartışmalara katılın ve bilgi paylaşın</p>
+    </div>
+
+    <div class="flex justify-between items-center mb-6">
+        <div class="relative w-1/2">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            <input type="text" id="room-search" placeholder="Oda ara..." class="search-input pl-10">
+        </div>
+        <a href="{% url 'chat_rooms:create_room' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Yeni Oda Oluştur
+        </a>
+    </div>
+
+    <div class="flex space-x-4 mb-6">
+        <button class="tab-button active">
+            <i class="fas fa-th-list mr-2"></i> Tüm Odalar
+        </button>
+        <button class="tab-button">
+            <i class="fas fa-star mr-2"></i> Popüler
+        </button>
+        <button class="tab-button">
+            <i class="fas fa-bookmark mr-2"></i> Katıldıklarım
+        </button>
+        <button class="tab-button">
+            <i class="fas fa-user-edit mr-2"></i> Oluşturduklarım
+        </button>
+    </div>
+
+    <!-- Room Cards -->
+    <div class="room-cards">
+        {% for room in rooms %}
+        <div class="room-card">
+            <div class="flex justify-between mb-3">
+                <div class="flex items-center gap-3">
+                    <div class="user-avatar">{{ room.owner.initials }}</div>
+                    <span class="text-sm text-gray-500">{{ room.owner.username }}</span>
+                    <span class="text-xs text-gray-400">{{ room.created_at }}</span>
+                </div>
+                <a href="{% url 'chat_rooms:chat_room' room_id=room.id %}" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Odaya Katıl
+                </a>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">{{ room.title }}</h3>
+            <span class="badge badge-primary mb-3">{{ room.category }}</span>
+            <p class="text-gray-600 mb-3">{{ room.description }}</p>
+            <div class="flex items-center gap-6 text-sm text-gray-500">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-users"></i>
+                    <span>25 Üye</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-comment-alt"></i>
+                    <span>150 Mesaj</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-circle text-green-500 text-xs"></i>
+                    <span>Aktif</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'chat_rooms/js/rooms.js' %}"></script>
+{% endblock %}

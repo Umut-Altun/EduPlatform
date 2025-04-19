@@ -17,7 +17,8 @@ urlpatterns = [
     path('resend-verification/', resend_verification_view, name='resend_verification'),
     path('forgot-password/', forgot_password_view, name='forgot_password'),
     path('reset-password/', reset_password_view, name='reset_password'),
-]
+    path('sohbet-odalari/', include('apps.chat_rooms.urls')),
+    ]
 
 # Medya dosyalarını geliştirme aşamasında sunun
 if settings.DEBUG:

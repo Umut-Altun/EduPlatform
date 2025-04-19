@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yeni Sohbet Odası - EduPlatform{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'chat_rooms/css/rooms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="create-room-page" class="page">
+    <div class="content-header">
+        <h1>Yeni Sohbet Odası Oluştur</h1>
+        <p>Yeni bir tartışma veya çalışma grubu başlatmak için aşağıdaki formu doldurun</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-sm">
+        <form id="create-room-form" method="POST" action="{% url 'chat_rooms:create_room' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="room-title" class="form-label">Oda Başlığı</label>
+                <input type="text" id="room-title" class="form-input" placeholder="Örn: JavaScript ile Web Uygulamaları Geliştirme">
+            </div>
+
+            <div class="form-group">
+                <label for="room-description" class="form-label">Oda Açıklaması</label>
+                <textarea id="room-description" class="form-input form-textarea" placeholder="Odanızın amacını ve içeriğini açıklayın..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label for="room-category" class="form-label">Kategori</label>
+                    <select id="room-category" class="form-input">
+                        <option value="">Kategori Seçin</option>
+                        <option value="programming">Programlama</option>
+                        <option value="webdev">Web Geliştirme</option>
+                        <option value="datascience">Veri Bilimi</option>
+                        <option value="mobildev">Mobil Uygulama Geliştirme</option>
+                        <option value="ai">Yapay Zeka</option>
+                        <option value="general">Genel</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="max-members" class="form-label">Maksimum Üye Sayısı</label>
+                    <input type="number" id="max-members" class="form-input" min="2" max="100" value="50">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Oda Özellikleri</label>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="is-private" class="mr-2">
+                        <label for="is-private">Özel Oda (Sadece davet edilen üyeler katılabilir)</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="is-moderated" class="mr-2">
+                        <label for="is-moderated">Moderatörlü (Mesajlar onaylanarak yayınlanır)</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="allow-files" class="mr-2" checked>
+                        <label for="allow-files">Dosya Paylaşımına İzin Ver</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="is-archived" class="mr-2">
+                        <label for="is-archived">Mesaj Arşivleme</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-6">
+                <a href="{% url 'chat_rooms:room_list' %}" class="btn-secondary">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-check"></i> Oda Oluştur
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'chat_rooms/js/rooms.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Yeni Sohbet Odası - EduPlatform{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'chat_rooms/css/rooms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="chat-room-page" class="page">
+    <div class="content-header">
+        <h1>Python Programlama Temelleri</h1>
+        <p>Python programlama dilinin temellerini öğrenmek ve pratik yapmak için oluşturulmuş bir çalışma grubu.</p>
+    </div>
+
+    <div class="chat-container flex flex-col">
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Chat Messages -->
+            <div class="chat-messages flex-1">
+                <!-- Message 1 -->
+                <div class="message message-incoming">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="user-avatar text-sm">AY</div>
+                        <span class="font-medium">Ahmet Yılmaz</span>
+                    </div>
+                    <div class="message-content">Merhaba arkadaşlar, Python öğrenmeye yeni başladım. Sizce hangi kaynakları takip etmeliyim?</div>
+                    <div class="message-time">10:25</div>
+                </div>
+
+                <!-- Message 2 -->
+                <div class="message message-outgoing">
+                    <div class="message-content">Merhaba, Python öğrenmek için çevrimiçi birçok kaynak var. Ben kişisel olarak Udemy'deki "Python Bootcamp" kursunu ve Python'ın resmi dokümantasyonunu takip etmiştim.</div>
+                    <div class="message-time">10:28</div>
+                </div>
+
+                <!-- Message 3 -->
+                <div class="message message-incoming">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="user-avatar text-sm">CA</div>
+                        <span class="font-medium">Cemil Aydın</span>
+                    </div>
+                    <div class="message-content">Ben de Python öğrenmeye yeni başladım. Freecodcamp ve Codecademy'deki ücretsiz kurslar da çok faydalı.</div>
+                    <div class="message-time">10:30</div>
+                </div>
+
+                <!-- Message 4 -->
+                <div class="message message-incoming">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="user-avatar text-sm">AY</div>
+                        <span class="font-medium">Ahmet Yılmaz</span>
+                    </div>
+                    <div class="message-content">Teşekkürler önerileriniz için. Bir de pratikte en çok kullanılan kütüphaneler hangileri? Onlara da odaklanmak istiyorum.</div>
+                    <div class="message-time">10:33</div>
+                </div>
+
+                <!-- Message 5 -->
+                <div class="message message-outgoing">
+                    <div class="message-content">NumPy, Pandas ve Matplotlib veri analizi için olmazsa olmaz. Web geliştirme için ise Flask veya Django öğrenmeni öneririm. Hangi alanda uzmanlaşmak istediğine bağlı olarak değişebilir.</div>
+                    <div class="message-time">10:36</div>
+                </div>
+
+                <!-- Message 6 -->
+                <div class="message message-incoming">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="user-avatar text-sm">SK</div>
+                        <span class="font-medium">Selin Kaya</span>
+                    </div>
+                    <div class="message-content">Merhaba herkese! Ben de gruba yeni katıldım. Python'da OOP (Nesne Yönelimli Programlama) konusunda iyi bir kaynak önerebilir misiniz?</div>
+                    <div class="message-time">10:42</div>
+                </div>
+
+                <!-- Message 7 -->
+                <div class="message message-incoming">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="user-avatar text-sm">CA</div>
+                        <span class="font-medium">Cemil Aydın</span>
+                    </div>
+                    <div class="message-content">Python'da OOP için "Corey Schafer" YouTube kanalını kesinlikle öneririm. Çok detaylı ve anlaşılır anlatıyor.</div>
+                    <div class="message-time">10:45</div>
+                </div>
+            </div>
+
+            <!-- Chat Sidebar (User List) -->
+            <div class="chat-sidebar">
+                <h3 class="text-lg font-semibold mb-4">Oda Üyeleri (25)</h3>
+                
+                <div class="mb-3">
+                    <input type="text" placeholder="Üye ara..." class="search-input text-sm py-2">
+                </div>
+
+                <div class="user-list">
+                    <!-- User 1 -->
+                    <div class="user-item">
+                        <div class="user-avatar">AY</div>
+                        <div>
+                            <div class="font-medium">Ahmet Yılmaz</div>
+                            <div class="text-xs text-gray-500">Oda Sahibi</div>
+                        </div>
+                        <div class="user-status status-online"></div>
+                    </div>
+
+                    <!-- User 2 -->
+                    <div class="user-item">
+                        <div class="user-avatar">CA</div>
+                        <div>
+                            <div class="font-medium">Cemil Aydın</div>
+                            <div class="text-xs text-gray-500">Moderatör</div>
+                        </div>
+                        <div class="user-status status-online"></div>
+                    </div>
+
+                    <!-- User 3 (You) -->
+                    <div class="user-item">
+                        <div class="user-avatar bg-indigo-100 text-indigo-600">SZ</div>
+                        <div>
+                            <div class="font-medium">Siz</div>
+                            <div class="text-xs text-gray-500">Üye</div>
+                        </div>
+                        <div class="user-status status-online"></div>
+                    </div>
+
+                    <!-- User 4 -->
+                    <div class="user-item">
+                        <div class="user-avatar">SK</div>
+                        <div>
+                            <div class="font-medium">Selin Kaya</div>
+                            <div class="text-xs text-gray-500">Üye</div>
+                        </div>
+                        <div class="user-status status-online"></div>
+                    </div>
+
+                    <!-- User 5 -->
+                    <div class="user-item">
+                        <div class="user-avatar">MY</div>
+                        <div>
+                            <div class="font-medium">Mehmet Yıldız</div>
+                            <div class="text-xs text-gray-500">Üye</div>
+                        </div>
+                        <div class="user-status status-offline"></div>
+                    </div>
+
+                    <!-- User 6 -->
+                    <div class="user-item">
+                        <div class="user-avatar">ZA</div>
+                        <div>
+                            <div class="font-medium">Zeynep Acar</div>
+                            <div class="text-xs text-gray-500">Üye</div>
+                        </div>
+                        <div class="user-status status-offline"></div>
+                    </div>
+
+                    <!-- More users... -->
+                    <div class="text-center text-sm text-gray-500 mt-3">
+                        +19 daha fazla üye
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input Area -->
+        <div class="chat-input-container">
+            <button class="text-gray-500 hover:text-indigo-600 transition-colors">
+                <i class="fas fa-paperclip text-xl"></i>
+            </button>
+            <button class="text-gray-500 hover:text-indigo-600 transition-colors">
+                <i class="far fa-smile text-xl"></i>
+            </button>
+            <input type="text" class="chat-input" placeholder="Mesajınızı yazın...">
+            <button class="btn-primary px-4 py-2">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'chat_rooms/js/rooms.js' %}"></script>
+{% endblock %}
